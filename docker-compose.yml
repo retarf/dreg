@@ -1,0 +1,28 @@
+version: '3.2'
+
+services:
+    scrubber:
+        depends_on:
+            - db
+        build: ./scrubber
+        volumes: 
+            - ./scrubber:/app/scrubber
+        ports:
+            - "8000:8000"
+        stdin_open: true
+        tty: true
+        command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
+
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: scrubber
+            POSTGRES_DB: scrubber
+        volumes:
+            - scrubber:/var/lib/postgresql/data
+
+volumes:
+    scrubber:
+
+
