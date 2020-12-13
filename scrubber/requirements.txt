@@ -2,3 +2,6 @@ django==3.0
 djangorestframework
 gunicorn
 psycopg2
+requests
+ipython
+ipdb
