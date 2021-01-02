@@ -5,3 +5,9 @@ psycopg2
 requests
 ipython
 ipdb
+beautifulsoup4
+pandas
+lxml
+html5lib
+jedi==0.17.2
+parso==0.7.1

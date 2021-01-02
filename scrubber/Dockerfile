@@ -10,6 +10,7 @@ RUN         apt update \
 
 RUN         apt install -y apt-utils python3-setuptools vim
 RUN         pip3 install --upgrade pip -r requirements.txt
+COPY        dev/.ipython /root/.ipython
 
 COPY        . /app/scrubber
 

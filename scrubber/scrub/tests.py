@@ -38,3 +38,12 @@ class PageTestCase(TestCase):
         asserted_url = f'{self.base_url}/{self.name},2'
         self.assertEqual(page.url, asserted_url)
         self.assertEqual(page.status_code, 200)
+
+    def test_soup(self):
+        page = Page(self.base_url, self.name, 2)
+        self.assertTrue(__realdata__.name in page.table)
+
+    def test_table(self):
+        page = Page(self.base_url, self.name, 1)
+        #print(page.table)
+
