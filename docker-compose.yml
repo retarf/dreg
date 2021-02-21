@@ -14,7 +14,7 @@ services:
         command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
 
     db:
-        image: postgres
+        image: postgres:12
         environment:
             POSTGRES_USER: admin
             POSTGRES_PASSWORD: scrubber
