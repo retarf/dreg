@@ -11,10 +11,11 @@ services:
             - "8000:8000"
         stdin_open: true
         tty: true
-        command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
+        #command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
+        command: python manage.py runserver 0.0.0.0:8000
 
     db:
-        image: postgres:12
+        image: postgres:13
         environment:
             POSTGRES_USER: admin
             POSTGRES_PASSWORD: scrubber

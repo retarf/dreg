@@ -9,5 +9,6 @@ beautifulsoup4
 pandas
 lxml
 html5lib
+scikit-learn
 jedi==0.17.2
 parso==0.7.1

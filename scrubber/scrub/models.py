@@ -3,7 +3,6 @@ import pandas as pd
 from django.db import models
 
 from scrub.pulling import Web
-from scrub.serializers import DataSerializer
 
 
 class Data:
@@ -22,3 +21,6 @@ class Data:
         data['Obrót'] = data['Obrót'].map(pd.to_numeric)
 
         return data
+
+class WebsiteModel(models.Model):
+    url = models.URLField()
