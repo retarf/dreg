@@ -16,7 +16,7 @@ class PullDataViewTestCase(TestCase):
             'url': url,
             'name': name,
         }
-        response = client.post('/scrubber/pull', data, format='json')
+        response = client.post('/trender/pull', data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['url'], url)

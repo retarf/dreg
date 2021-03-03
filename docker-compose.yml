@@ -1,12 +1,12 @@
 version: '3.2'
 
 services:
-    scrubber:
+    trender:
         depends_on:
             - db
-        build: ./scrubber
+        build: ./trender
         volumes: 
-            - ./scrubber:/app/scrubber
+            - ./trender:/app/trender
         ports:
             - "8000:8000"
         stdin_open: true
@@ -18,12 +18,12 @@ services:
         image: postgres:13
         environment:
             POSTGRES_USER: admin
-            POSTGRES_PASSWORD: scrubber
-            POSTGRES_DB: scrubber
+            POSTGRES_PASSWORD: trender
+            POSTGRES_DB: trender
         volumes:
-            - scrubber:/var/lib/postgresql/data
+            - trender:/var/lib/postgresql/data
 
 volumes:
-    scrubber:
+    trender:
 
 
