@@ -4,6 +4,7 @@ ENV         PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR     /app/trender
 COPY        requirements.txt /app/trender
+COPY        openssl.cnf /etc/ssl/openssl.cnf
 
 RUN         apt update \
             && apt upgrade -y 
