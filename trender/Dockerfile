@@ -9,8 +9,9 @@ COPY        openssl.cnf /etc/ssl/openssl.cnf
 RUN         apt update \
             && apt upgrade -y 
 
-RUN         apt install -y apt-utils python3-setuptools vim
+RUN         apt install -y apt-utils python3-setuptools vim pipenv
 RUN         pip3 install --upgrade pip -r requirements.txt
+RUN         pipenv install
 COPY        dev/.ipython /root/.ipython
 
 COPY        . /app/trender
