@@ -17,3 +17,15 @@ down: up
 format: up 
 	@docker-compose exec trender isort .
 	@docker-compose exec trender black .
+
+.PHONY: shell
+shell: up
+	@docker-compose exec trender bash
+
+.PHONY: build
+build:
+	@docker-compose build trender
+
+.PHONY: logs
+logs:
+	@docker-compose logs trender
