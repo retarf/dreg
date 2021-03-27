@@ -9,6 +9,8 @@ services:
             - ./trender:/app/trender
         ports:
             - "8000:8000"
+        environment:
+            DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
         stdin_open: true
         tty: true
         #command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
