@@ -29,3 +29,11 @@ build:
 .PHONY: logs
 logs:
 	@docker-compose logs trender
+
+.PHONY: dshell
+dshell: up
+	@docker-compose exec trender python manage.py shell
+
+.PHONY: test
+test: up
+	@docker-compose exec trender pytest scraper
