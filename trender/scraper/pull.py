@@ -1,66 +1,62 @@
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import pandas
 
 
-class Page:
+class DataError(Exception):
+    pass
 
-    def __init__(self, base_url, name, num=0):
-        self.base_url = base_url
+
+class DataPullingError(Exception):
+    pass
+
+
+class Data:
+
+    # "https://www.gpw.pl/archiwum-notowan?fetch=0&type=10&instrument=KGHM&date=&show_x=Poka%C5%BC+wyniki"
+    url = "https://www.gpw.pl/archiwum-notowan-full"
+    params = {
+        "fetch": 0,
+        "type": 10,
+        "date": "",
+    }
+
+    def __init__(self, name):
         self.name = name
-        self.num = num
-        self.response = requests.get(self.url)
+        self.params["instrument"] = name
 
-    @property
-    def url(self) -> str:
-        extension = f'{self.name},{self.num}'
-        if self.num <= 1:
-            extension = f'{self.name}'
-        return f'{self.base_url}/{extension}'
+    def _get_response(self):
+        return requests.get(self.url, self.params)
 
-    @property
-    def content(self) -> str:
-        return self.response.text
+    def _get_html(self, response):
+        if response.status_code != 200:
+            raise DataPullingError
 
-    @property
-    def status_code(self):
-        return self.response.status_code
+        return response.text
 
-    @property
-    def soup(self):
-        return BeautifulSoup(self.content, 'html.parser')
+    def _get_table(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        try:
+            table = str(soup.find_all("table")[1])
+        except IndexError:
+            raise DataPullingError(f"Can't find data for instrument {self.name}")
 
-    @property
-    def table(self):
-        #return self.soup.table
-        return self.soup.table
+        return table
 
-    @property
-    def data(self):
-        return pandas.read_html(str(self.table))[0]
+    def _get_dataframe(self, table):
+        return pd.read_html(table, decimal=",", thousands=" ", index_col=["Data sesji"])[0]
 
+    def _parse_dataframe(self, df):
+        df.index = pd.to_datetime(df.index)
 
-class Web:
+        return df
 
-    def __init__(self, webconf, name):
-        self.webconf = webconf
-        self.url = self.webconf.url
-        self.name = name
-        self.page = Page(self.url, name)
-        self.page_number_class = self.webconf.page_number_class
-        self.page_number_separator = self.webconf.page_number_separator
+    def get(self):
 
-    @property
-    def last(self):
-        return max([
-            int(tag.string)
-            for tag in self.page.soup.find_all(class_="pages_pos")
-            if tag.string != self.page_number_separator
-        ])
+        response = self._get_response()
+        html = self._get_html(response)
+        table = self._get_table(html)
+        df = self._get_dataframe(table)
+        df = self._parse_dataframe(df)
 
-    @property
-    def data(self):
-        return pandas.concat([
-            Page(self.url, self.name, page_no).data
-            for page_no in range(1, self.last + 1)
-        ])
+        return df
