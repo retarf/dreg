@@ -1,6 +1,10 @@
+import os
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from direct_redis import DirectRedis
+
+from dotenv import load_dotenv
 
 
 class DataError(Exception):
@@ -11,7 +15,21 @@ class DataPullingError(Exception):
     pass
 
 
-class Data:
+load_dotenv()
+
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+REDIS_PANDAS_DB = 0
+TIMEZONE = 'Europe/Warsaw'
+END_SESSION_HOUR = 17
+
+DATE_FORMAT = '%Y-%M-%d'
+
+DAYS_OF_SESSION_WEEK = "Mon Tue Wed Thu Fri"
+redis = DirectRedis(REDIS_HOST, REDIS_PORT, REDIS_PANDAS_DB)
+SESSION_WEEK = pd.offsets.CustomBusinessDay(weekmask=DAYS_OF_SESSION_WEEK)
+
+class DataPuller:
 
     # "https://www.gpw.pl/archiwum-notowan?fetch=0&type=10&instrument=KGHM&date=&show_x=Poka%C5%BC+wyniki"
     url = "https://www.gpw.pl/archiwum-notowan-full"
@@ -60,3 +78,37 @@ class Data:
         df = self._parse_dataframe(df)
 
         return df
+
+class DataManager:
+
+    def __init__(self, company: str):
+        self.company = company
+
+    def get_last_session_date(self) -> pd.Timestamp:
+        #TODO: Add days of year without session
+        today = pd.Timestamp.today(tz=TIMEZONE)
+        last_session = today - 1 * SESSION_WEEK
+        if today == today + 0 * SESSION_WEEK and today > today.replace(hour=END_SESSION_HOUR, minute=0, secund=0):
+            last_session = today
+
+        return last_session.date()
+
+    def get_data(self):
+        df = redis.get(self.company)
+        if df is None:
+            df = self.pull_data()
+        elif not self.get_last_session_date() == df.iloc[-1].name.date():
+            df = self.pull_data()
+        return df
+
+    def pull_data(self):
+        df = DataPuller(self.company).get()
+        redis.set(self.company, df)
+        return df
+
+    def drop_data(self):
+        pass
+
+
+
+

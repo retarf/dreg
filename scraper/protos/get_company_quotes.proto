@@ -1,0 +1,36 @@
+service CompanyQuotesService {
+  rpc GetCompanyQuotes (GetCompanyQuotesRequest) returns (GetCompanyQuotesResponse) {}
+  rpc GetCompanyOneQuote (GetOneCompanyQuoteRequest) returns (GetCompanyQuotesResponse) {}
+}
+
+message GetCompanyQuotesRequest {
+  repeated string name = 1;
+}
+
+message GetCompanyQuotesResponse {
+  repeated Quotes = 1;
+}
+
+message GetOneCompanyQuoteRequest {
+  string name = 1;
+  int64 timestamp = 2;
+}
+
+message Quotes {
+  string name = 1;
+  repeated Quote = 2;
+}
+
+message Quote {
+  int64 timestamp = 1;
+  string isin = 2;
+  string currency = 3;
+  float open = 4;
+  float max = 5;
+  float min = 6;
+  float close = 7;
+  float change = 8;
+  int64 volume = 9;
+  int64 number = 10;
+  float value = 11;
+}

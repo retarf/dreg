@@ -16,6 +16,19 @@ services:
         #command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
         command: python manage.py runserver 0.0.0.0:8000
 
+    scraper:
+        depends_on:
+            - db
+        build: ./scraper
+        volumes: 
+            - ./scraper:/app/scraper
+        ports:
+            - "8001:8000"
+        stdin_open: true
+        tty: true
+        #command: /usr/local/bin/gunicorn scrubber.wsgi -w 2 -b :8000 --reload
+        command: uvicorn main:app --reload
+
     db:
         image: postgres:13
         environment:
