@@ -79,10 +79,10 @@ class DataPuller:
 
         return df
 
-class DataManager:
+class Data:
 
     def __init__(self, company: str):
-        self.company = company
+        self.company = company.upper()
 
     def get_last_session_date(self) -> pd.Timestamp:
         #TODO: Add days of year without session
@@ -107,8 +107,4 @@ class DataManager:
         return df
 
     def drop_data(self):
-        pass
-
-
-
-
+        redis.delete(self.company)
